@@ -16,9 +16,9 @@ int main()
     for (int i = 0; i < N - 1; i++) cin >> dist[i];
     for (int i = 0; i < N; i++) cin >> price[i];
 
-    int sum = 0;
-    int disSum = 0;
-    int currPrice = 1000000001;
+    long long sum = 0;
+    long long disSum = 0;
+    long long currPrice = 1000000001;
     for (int i = 0; i < N - 1; i++)
     {
         if (currPrice <= price[i])
