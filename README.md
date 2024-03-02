@@ -1,2 +1,2 @@
-# BOJ-Baekjoon-Online-Judge
-This is an auto push repository for Baekjoon Online Judge created with [BaekjoonHub](https://github.com/BaekjoonHub/BaekjoonHub).
+# 백준 풀며 잔디 채우기
+빈 잔디가 신경 쓰인다면? 문제를 풀어라! 🤓
