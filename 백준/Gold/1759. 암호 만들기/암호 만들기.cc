@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std; 
+
+int L,C;
+char c;
+vector<char> vec;
+int used[26]= {0,};
+char answer[15]; 
+
+int vowl[5] = {0,4,8,14,20};
+
+void choose(int cnt, int base){ 
+    int vowlCnt= 0;
+    if (cnt==L){
+        for (int j=0; j<L; j++){
+            for (int k=0; k<5;k++){
+                if (answer[j]-'a'==vowl[k]){
+                    vowlCnt++;
+                    break;
+                }
+            }
+            
+        }
+        if (vowlCnt==0 || (L-vowlCnt)<2) return;
+        for (int j=0; j<L; j++){
+            cout << answer[j];
+        }
+        cout << "\n";
+        return;
+    }
+        for (int i=base; i<C; i++){
+        if (used[i]==0){
+            used[i]=1;
+            answer[cnt]=vec[i];
+            choose(cnt+1, i+1);
+            used[i]=0;
+        }
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+   cin >> L >> C;
+
+   for (int i=0; i<C; i++){
+        cin >> c;
+        vec.push_back(c);
+   }
+   sort(vec.begin(), vec.end());
+
+    choose(0,0);    
+    return 0;
+}
