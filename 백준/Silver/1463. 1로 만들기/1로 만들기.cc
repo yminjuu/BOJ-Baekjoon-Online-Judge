@@ -6,7 +6,6 @@ int N;
 int memo[1000001]= {0};
 
 int DP(int k){
-    if (k<=0) return 0;
     if (k<=3) return memo[k];
 
     int min=1000000;
