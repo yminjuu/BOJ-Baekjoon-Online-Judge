@@ -3,44 +3,28 @@
 #include <algorithm>
 
 using namespace std;
+int student[35]; // 0으로 초기화
 
+// 모범 답안 코드
 int solution(int n, vector<int> lost, vector<int> reserve) {
-    int answer = n - lost.size();
-    sort(lost.begin(), lost.end());
-    sort(reserve.begin(), reserve.end());
-    int isLost[30]= {0};
-    int isUsed[30] = {0};
+    int answer = 0;
     
-    for (int i=0; i<lost.size(); i++){
-        for (int j=0; j<reserve.size(); j++){
-            if (lost[i]==reserve[j]) {
-                isLost[i]=1;
-                isUsed[j]=1;
-                answer++;
-            }
-            // erase, remove 함수로는 맨 마지막 원소를 삭제할 수가 없음
+    // i는 벡터값 자체
+    for (int i : reserve) student[i]+=1; // 여분이 있으므로
+    for (int i : lost) student[i]-=1; // 구해야 함
+    
+    // 값이 0인 것 -> 빌리지도 / 구하지도 않음
+    // 값이 1임 -> 빌려주기 가능
+    // 값이 -1임 -> 구해야 함
+    
+    for (int i=1; i<=n; i++){
+        if (student[i]==1) {
+            if (student[i-1]==-1) student[i-1]+=1; // 앞에서부터 도와줌
+            else if (student[i+1]==-1) student[i+1]+=1; // 뒤를 도와줌
         }
     }
-
-    for (int i=0; i<lost.size(); i++){
-        if (isLost[i]==1) continue;
-        
-        int prevIdx=-1, nextIdx=-1;
-        int tmp = lost[i]; 
-        for (int j=0; j<reserve.size();j++){
-            if (isUsed[j]==1) continue;
-            if (tmp-1==reserve[j]) prevIdx= j;
-            if (tmp+1==reserve[j]) nextIdx=j;
-        }
-        
-        if (prevIdx==-1 && nextIdx==-1) continue;
-        if (prevIdx!= -1) isUsed[prevIdx]= 1;
-        else isUsed[nextIdx]=1;
-        answer++;
-        // 2) n-1, n+1 둘 다 빌리기 가능 => 앞에서 빌린다, answer 카운트
-        // 3) n-1, n+1 둘 중 하나만 빌리기 가능 => 그걸 빌린다
-        // 4) 둘 다 없다 => pass
-    }
+    
+    for (int i=1; i<=n; i++) if (student[i]!=-1) answer++;
     
     return answer;
 }
