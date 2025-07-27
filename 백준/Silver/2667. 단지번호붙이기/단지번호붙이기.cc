@@ -1,80 +1,58 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 #include <queue>
+
 using namespace std;
-int N, hCnt = 0, cnt = 0;
+
 char c;
-int arr[27][27] = {
-    0,
-};
-queue<pair<int, int>> q;
-priority_queue<int, vector<int>, greater<int>> pq;
+const int V = 27; // 25 + 여유 공간 2
+int N, cnt; // 5~25
 
-void BFS(int x, int y)
-{
-    hCnt++;
-    q.pop();
+int adj[V][V]; // 0으로 초기화된 전역 배열
+int near[2][4] = {{0,0,1,-1}, {1,-1,0,0}};
+vector<int> ans;
 
-    if (arr[x - 1][y]){
-        q.push(make_pair(x - 1, y));
-        arr[x-1][y] = 0;
-    }
-    if (arr[x][y - 1]){
-        q.push(make_pair(x, y - 1));
-        arr[x][y-1] = 0;
-    }
-    if (arr[x + 1][y]){
-        q.push(make_pair(x + 1, y));
-        arr[x+1][y] = 0;
-    }
-    if (arr[x][y + 1]){
-        q.push(make_pair(x, y + 1));
-        arr[x][y+1] = 0;
-    }
+void dfs(int x, int y){
+    cnt++;
+    adj[x][y]=0;
 
-    if (!q.empty())
-        BFS(q.front().first, q.front().second);
-    else return;
+    for (int i=0; i<4; i++){
+       if (adj[x+near[0][i]][y+near[1][i]]) {
+            dfs(x+near[0][i], y+near[1][i]);
+       }
+    }
 }
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
+   ios_base::sync_with_stdio(false);
+   cin.tie(0); cout.tie(0);
+   
+   cin >> N;
 
-    cin >> N;
-    for (int i = 1; i <= N; i++)
-    {
-        for (int j = 1; j <= N; j++)
-        {
-            cin >> c;
-            arr[i][j] = c-'0';
+   for (int i=0; i<N; i++){
+    for (int j=0; j<N; j++){
+        cin >> c;
+        adj[i+1][j+1]= c-'0'; // 0행, 0열은 사용하지 않음
+    }
+   }
+
+   for (int i=1; i<=N; i++){
+    for (int j=1; j<=N; j++){
+        if (adj[i][j]) {
+            cnt=0;
+            dfs(i,j);
+            ans.push_back(cnt);
         }
     }
+   }
 
-    for (int i = 1; i <= N; i++)
-    {
-        for (int j = 1; j <= N; j++)
-        {
-            if (arr[i][j])
-            {
-                arr[i][j]=0;
-                hCnt = 0;
-                cnt++;
-                q.push(make_pair(i, j));
-                BFS(i, j);
-                pq.push(hCnt);
-            }
-        }
-    }
+   cout << ans.size() << "\n";
+   sort(ans.begin(), ans.end()); // 오름차순 정렬 추가
+   for (int i=0; i<ans.size(); i++){
+    cout << ans[i] << "\n";
+   }
 
-    cout << cnt;
-    while(!pq.empty()){
-        cout << "\n";
-        cout << pq.top();
-        pq.pop();
-    }
-
-    return 0;
+   return 0;
 }
