@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <cstring>
 
 using namespace std;
 const int maxNM=8;
@@ -14,14 +15,6 @@ vector<pair<int,int> >  pairVec; // 쌍을 저장
 int near[2][4] = {{0,0,1,-1}, {1,-1,0,0}}; // 인접 배열
 
 int ans=0;
-
-void copyArr(int tmp[maxNM][maxNM], int a[maxNM][maxNM]){
-    for (int i=0; i<N; i++){
-        for (int j=0; j<M; j++){
-            tmp[i][j]= a[i][j];
-        }
-    }
-}
 
 void bfs(){
     queue<pair<int, int> > q; // 바이러스를 저장하는 큐
@@ -66,7 +59,7 @@ void bfs(){
 void makeWall(int cur, int idx){
     // 3가지 벽 세울 곳을 다 골랐다면 (브루트포스)
     if (cur==3){
-        copyArr(tmpArr, arr); // 원본 배열로부터 임시로 배열을 copy해서 만듦
+        memcpy(tmpArr, arr, sizeof(arr)); // 원본 배열로부터 임시로 배열을 copy해서 만듦
 
         int cnt= 0;
         for (int i=0; i<pairVec.size(); i++){
@@ -86,7 +79,7 @@ void makeWall(int cur, int idx){
     for (int i=idx; i<pairVec.size(); i++){
         if (visited[i]) continue;
         visited[i]=true;
-        makeWall(cur+1, i); // dfs
+        makeWall(cur+1, i);
         visited[i]=false;
     }
 }
