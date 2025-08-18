@@ -1,31 +1,34 @@
 #include <iostream>
-#include <algorithm>
+#include <vector>
+
 using namespace std;
 
-long long N, M, k, ans = 0;
-long long cnt[1001] = {
-    0,
-};
-long long sum = 0;
+int N,M, tmp;
 
-int main()
-{
+
+int main(){
     ios_base::sync_with_stdio(false);
-    cin.tie(0);
-
+    cin.tie(0); cout.tie(0);
+    
     cin >> N >> M;
-    for (int i = 1; i <= N; i++)
-    {
-        cin >> k;
-        sum += k;
-        cnt[sum % M] += 1;
+    vector<long> sum(N,0);
+    vector<long> remainder(M,0);
+
+    cin >> sum[0];
+    for (int i=1; i<N; i++){
+        cin >> tmp;
+        sum[i]= sum[i-1] + tmp;
     }
 
-    for (int i = 0; i <= 1000; i++)
-    {
-        ans += (cnt[i] * (cnt[i] - 1) / 2);
+    for (int i=0; i<N; i++){
+        sum[i] = sum[i] % M;
+        remainder[sum[i]]++; 
     }
 
-    cout << ans + cnt[0];
-    return 0;
+    long long ans=0;
+    ans+= remainder[0];
+    for (int i=0; i<M; i++){
+        ans += (remainder[i]*(remainder[i]-1)/2);
+    }
+    cout << ans;
 }
