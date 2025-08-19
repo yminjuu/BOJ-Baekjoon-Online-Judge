@@ -1,28 +1,37 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
 
 using namespace std;
-int N, M, cnt=0;
+int N,M, tmp, ans=0;
 
-int main()
-{
-   ios_base::sync_with_stdio(false);
-   cin.tie(0); cout.tie(0);
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+    
+    cin >> N >> M;
+    vector<int> vec;
 
-   cin >> N >> M;
-   int a[N];
-   for (int i=0; i<N; i++){
-        cin >> a[i];
-   }
-
-   for (int i=0; i<N; i++){
-        for (int j=i+1; j<N; j++){
-        if (a[i]+a[j]==M) cnt++;
+    for (int i=0; i<N; i++){
+        cin >> tmp;
+        vec.push_back(tmp);
     }
-   }
 
-   cout << cnt;
+    sort(vec.begin(), vec.end());
 
-   return 0;
+    int start_index=0; 
+    int end_index=N-1; 
+    
+    while (start_index < end_index){
+        if (vec[start_index]+vec[end_index]<M){
+            start_index++;
+        } else if (vec[start_index]+vec[end_index]>M){
+            end_index--;
+        } else {
+            ans++;
+            start_index++;
+            end_index--;
+        }
+    }
+    
+    cout << ans;
 }
