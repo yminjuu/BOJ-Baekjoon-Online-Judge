@@ -18,13 +18,14 @@ int main(){
 
     sort(vec.begin(), vec.end());
 
-    int start_index=0; 
-    int end_index=N-1; 
+    int start_index=0;
+    int end_index=N-1;
     
     while (start_index < end_index){
-        if (vec[start_index]+vec[end_index]<M){
+        int sum = vec[start_index] + vec[end_index];
+        if (sum<M){
             start_index++;
-        } else if (vec[start_index]+vec[end_index]>M){
+        } else if (sum>M){
             end_index--;
         } else {
             ans++;
