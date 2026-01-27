@@ -1,41 +1,51 @@
 #include <iostream>
+#include <vector>
 #include <algorithm>
+#include <queue>
+#include <string>
+
 using namespace std;
 
-long long N, M, Mcnt, k=0;
-int arr[100000];
+int N,M;
+vector<int> vec; // N 보관
+void find(int tmp);
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
+   ios_base::sync_with_stdio(false);
+   cin.tie(0); cout.tie(0);
+   
+   cin >> N;
+   int tmp;
+   for (int i=0; i<N; i++){
+        cin >> tmp;
+        vec.push_back(tmp);
+   }
 
-    cin >> N;
-    for (int i = 0; i < N; i++)
-        cin >> arr[i];
+   sort(vec.begin(), vec.end()); // 오름차순 기본
 
-    sort(arr, arr + N); // 오름차순 정렬
+   cin >> M;
+   for (int i=0; i<M; i++){
+    cin >> tmp;
+    find(tmp);
+   }
 
-    cin >> Mcnt;
-    for (int i = 0; i < Mcnt; i++)
-    {   
-        cin >>M;
-        k=0;
-        int begin = 0, end = N - 1, mid = N / 2;
-        while (begin <= end){
-            
-            mid=(begin+end)/2;
-            
-            if (arr[mid]==M) {
-                k=1; break;
-            }
-            
-            if (arr[mid]<M)
-                begin=mid+1;
-            if (M<arr[mid])
-                end=mid-1;
-            
+   return 0;
+}
+
+void find(int tmp){
+    int i=0; int j= vec.size()-1;
+
+    while (i<=j){
+        int mid = (i+j)/2;
+        if (vec[mid]> tmp){
+            j=mid-1;
+        } else if (vec[mid]<tmp) {
+            i=mid+1;
+        } else {
+            cout << 1 << "\n";
+            return;
         }
-        cout << k << "\n";
     }
+    cout << 0 << "\n";
 }
