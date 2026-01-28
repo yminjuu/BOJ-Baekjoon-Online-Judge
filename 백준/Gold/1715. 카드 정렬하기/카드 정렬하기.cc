@@ -2,30 +2,33 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <string>
 
 using namespace std;
-int N, sz, curr, ans=0;
 
 int main()
 {
    ios_base::sync_with_stdio(false);
    cin.tie(0); cout.tie(0);
-   priority_queue<int, vector<int>, greater<int> > pq;
 
-   cin >> N;
-   for (int i=0; i<N; i++) {
-    cin >> sz;
-    pq.push(sz);
-   }
+    int N;
+    cin >> N;
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (int i=0; i<N; i++){
+        int tmp;
+        cin >> tmp;
+        pq.push(tmp);
+    }
 
-   while (pq.size() >1 ){
-        curr = pq.top(); pq.pop();
-        curr += pq.top(); pq.pop();
-        ans += curr;
-        pq.push(curr);
-   }
+    int ans =0;
+    while (pq.size()>1){
+        int mn1= pq.top(); pq.pop();
+        int mn2= pq.top(); pq.pop();
+        ans+=mn1+mn2;
+        pq.push(mn1+mn2);
+    }
 
-   cout << ans;
-   
+    cout << ans;
+
    return 0;
 }
