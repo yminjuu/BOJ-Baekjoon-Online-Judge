@@ -16,9 +16,7 @@ int find(int gate){
 void union_sets(int a, int b){
     a= find(a); 
     b= find(b); 
-    if (a!=b) {
         parent[a]= parent[b];
-    }
 }
 
 int main()
