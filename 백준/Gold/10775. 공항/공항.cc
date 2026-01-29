@@ -5,6 +5,21 @@
 #include <string>
 
 using namespace std;
+vector<int> parent;
+
+int find(int gate){
+    if (parent[gate]==gate) return gate;
+    return parent[gate]= find(parent[gate]); 
+}
+
+// a > b
+void union_sets(int a, int b){
+    a= find(a); 
+    b= find(b); 
+    if (a!=b) {
+        parent[a]= parent[b];
+    }
+}
 
 int main()
 {
@@ -13,35 +28,25 @@ int main()
    
    int G, P;
    cin >> G >> P;
-   vector<int> maxGate(P+1);
    vector<bool> docked(G+1, false);
-   vector<int> lastGateForMaxGate(G+1);
-
-   for (int i=1; i<=P; i++){
-    cin >> maxGate[i];
-   }
+   parent.resize(G+1);
 
    for (int i=1; i<=G; i++){
-    lastGateForMaxGate[i]= i;
+    parent[i]= i; 
    }
 
-   int ans =0 ;
+   int tmp, ans =0 ;
    for (int i=1; i<=P; i++){
-        int j=lastGateForMaxGate[maxGate[i]];
-        for (; j!=0; j--){
-            if (!docked[j]){
-                docked[j]= true;
-                lastGateForMaxGate[maxGate[i]]--;
-                ans++;
-                break;
-            }
-        }
-        if (j==0){
-            // 도킹 불가능
-            cout << ans;
-            return 0; // 종료
-        }
+    cin >> tmp;
 
+    int emptyGate= find(tmp); 
+
+    if (emptyGate==0){
+        break;
+    }
+
+    ans++;
+    union_sets(emptyGate, emptyGate-1);
    }
 
    cout << ans;
