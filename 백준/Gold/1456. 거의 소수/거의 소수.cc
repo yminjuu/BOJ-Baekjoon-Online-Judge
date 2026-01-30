@@ -32,7 +32,13 @@ int main()
         if (arr[i]){
             long long tmp=i;
             // (1) double로 먼저 안전하게 값 비교
-            while ((double)tmp * i <= (double)B){
+            // while ((double)tmp * i <= (double)B){
+            //     tmp*=i;
+            //     if (tmp>=A) ans++;
+            // }
+
+            // (2) 이항정리로 비교
+            while (tmp<= B/i){
                 tmp*=i;
                 if (tmp>=A) ans++;
             }
