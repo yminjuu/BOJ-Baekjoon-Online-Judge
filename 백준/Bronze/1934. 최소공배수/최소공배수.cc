@@ -7,14 +7,12 @@
 using namespace std;
 
 int GCD(int a, int b){
-    int A = a; int B= b;
-    while (true){ 
-        int r = A%B;
-        if (r==0) break; 
-        A = B; 
-        B = r;
-    }
-    return B;
+    int r = a%b;
+    if (r==0) return b; 
+    
+    a = b; 
+    b = r;
+    return GCD(a,b); 
 }
 
 int main()
