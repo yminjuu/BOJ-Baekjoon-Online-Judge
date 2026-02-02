@@ -56,13 +56,8 @@ int main()
     for (int i=1; i<=N; i++){
         if (ans[i]>mx) mx=ans[i];
     }
-    vector<int> ansVec;
     for (int i=1; i<=N; i++){
-        if (ans[i]==mx) ansVec.push_back(i);
-    }
-    sort(ansVec.begin(), ansVec.end());
-    for (int i=0; i<ansVec.size(); i++){
-        cout << ansVec[i] << " ";
+        if (ans[i]==mx) cout << i << " ";
     }
 
    return 0;
