@@ -30,28 +30,20 @@ int main()
     for (int i=1; i<=N; i++){
         if (!indegree[i]) {
             q.push(i);
-            indegree[i]--;
-            break;
         }
     }
 
     while (!q.empty()){
         int p = q.front(); q.pop(); ans.push_back(p);
+        cout << p << " ";
+        
         // 연결된 진입차수 감소시킴
         for (int i=0; i<A[p].size(); i++){
             indegree[A[p][i]]--;
-        }
-        // 다음으로 진입차수가 0인 애를 찾음
-        for (int i=1; i<=N; i++){
-            if (!indegree[i]) {
-                indegree[i]--; // -1로 표시
-                q.push(i);
-                break;
-            }
+
+            if (!indegree[A[p][i]]) q.push(A[p][i]);
         }
     }
-
-    for (int i=0; i<ans.size(); i++) cout << ans[i] << " ";
 
    return 0;
 }
