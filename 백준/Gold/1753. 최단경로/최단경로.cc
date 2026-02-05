@@ -1,84 +1,50 @@
 #include <iostream>
-#include <queue>
 #include <vector>
-#include <limits.h>
+#include <algorithm>
+#include <queue>
+#include <string>
+#include <climits>
+
 using namespace std;
-
-#define MAX 20002
-
-int V, E, K, u, v, w;
-vector<pair<int, int>> gph[MAX];
-
-
-struct cmp
-{
-    bool operator()(const pair<int, int> &a, const pair<int, int> &b)
-    {
-        return a.second > b.second;
-    }
-};
-
-priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> pq;
-
-int ret_min(int a, int b, int idx)
-{
-    if (a <= b)
-        return a;
-    else
-    {
-        pq.push(make_pair(idx, b));
-        return b;
-    }
-}
-
-void shortest_Path(int k)
-{
-    int visited[V+1] = {0,};
-    
-    int dest[V+1];
-    fill_n(dest, V+1, 987654321);
-    dest[k] = 0;
-
-    while (!pq.empty())
-    {
-        pq.pop();
-        if (!visited[k]){
-            for (int i = 0; i < gph[k].size(); i++)
-            {
-                int idx = gph[k].at(i).first;
-                dest[idx] = ret_min(dest[idx], dest[k] + gph[k].at(i).second, idx);
-            }
-        }
-        visited[k]= 1;
-        k = pq.top().first;
-    }
-    
-    for (int i = 1; i <= V; i++)
-    {
-        if (dest[i] == 987654321)
-            cout << "INF"
-                 << "\n";
-        else
-            cout << dest[i] << "\n";
-    }
-    return;
-}
+typedef pair<int,int> p;
+int V,E, startN;
+vector<int> dist;
+vector<vector<p>> vec;
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
+   ios_base::sync_with_stdio(false);
+   cin.tie(0); cout.tie(0);
 
-    cin >> V >> E >> K;
+    cin >> V >> E >> startN;
+    dist.resize(V+1);
+    vec.resize(V+1);
+    fill(dist.begin(), dist.end(), INT_MAX);
+    dist[startN]=0; 
 
-    for (int i = 0; i < E; i++)
-    {
+    int u, v, w;
+    while (E--){
         cin >> u >> v >> w;
-        gph[u].push_back(make_pair(v, w));
+        vec[u].push_back({v,w});
     }
 
-    pq.push(make_pair(K, 0));
-    shortest_Path(K);
+    priority_queue<p, vector<p>, greater<p>> pq;
+    pq.push({0, startN});
+    while (!pq.empty()){
+        p pp = pq.top(); pq.pop(); 
+        for (int i=0; i<vec[pp.second].size(); i++){
+            p nearN = vec[pp.second][i];
+            if (dist[nearN.first] > pp.first + nearN.second){
+                dist[nearN.first] = pp.first + nearN.second;
+                pq.push({dist[nearN.first], nearN.first});
+            }
+        }
+    }
 
-    return 0;
+    for (int i=1; i<=V; i++){
+        if (dist[i]!=INT_MAX) cout << dist[i] << "\n";
+        else cout << "INF\n";
+    }
+
+   return 0;
 }
