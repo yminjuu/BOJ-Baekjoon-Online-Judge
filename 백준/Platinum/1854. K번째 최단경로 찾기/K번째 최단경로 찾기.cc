@@ -8,10 +8,9 @@
 using namespace std;
 using ll = long long;
 typedef pair<ll,int> p;
+priority_queue<int> distQueue[1001];
 
 vector<vector<p>> vec;
-vector<ll> currMin;
-vector<int> reached; // 도달 횟수를 센다. K번 도달까지만 큐에서 확인
 vector<ll> ans;
 
 int main()
@@ -22,9 +21,7 @@ int main()
    int n,m,k;
    cin >> n >> m >> k;
 
-    vec.resize(n+1); reached.resize(n+1); ans.resize(n+1);
-    currMin.resize(n+1);
-    fill(currMin.begin(), currMin.end(), LLONG_MIN);
+    vec.resize(n+1); ans.resize(n+1);
 
     int a,b,c;
     while (m--){
@@ -37,21 +34,22 @@ int main()
 
     while (!pq.empty()){
         p currN = pq.top(); pq.pop();
-        if (++reached[currN.second]<=k){
+        if (distQueue[currN.second].size()>=k) continue;
+        if (distQueue[currN.second].size()<k) distQueue[currN.second].push(currN.first); // 다음으로 작은값 넣음
+        
+        if (distQueue[currN.second].size()<=k){
             for (int i=0; i<vec[currN.second].size(); i++){
                 p nextN= vec[currN.second][i];
-
-            // 확실하게 클 때에만 넣는다 (같을 수도 있음))
-                if (currMin[nextN.first] < currN.first + nextN.second){
-                    pq.push({currN.first + nextN.second, nextN.first});
-                }
+                // 최솟값보다 작을 수도, 클수도 있음.
+                
+                // push 조건 추가 (이미 정답 결정됐으면 넣지 않음)
+                if (distQueue[nextN.first].size()<k) pq.push({nextN.second + currN.first, nextN.first});
             }
-        }
-        if (reached[currN.second]==k) ans[currN.second] = currN.first;
+        } 
     }
 
     for (int i=1; i<=n; i++){
-        if (reached[i]>=k) cout << ans[i] << "\n";
+        if (distQueue[i].size()==k) cout << distQueue[i].top() << "\n";
         else cout << -1 << "\n";
     }
 
