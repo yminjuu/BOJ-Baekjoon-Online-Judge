@@ -1,47 +1,53 @@
 #include <iostream>
 #include <vector>
-#include <limits.h>
-using namespace std;
-int N, M, A, B, C;
-long long Dist[102][102];
-const long long INF = 987654321;
+#include <algorithm>
+#include <queue>
+#include <string>
 
-void floyd(){
-    for (int i=1; i<=N; i++){ //i번째 정점을 거칠 수 있음
-        for (int j=1; j<=N; j++){
-            for (int k=1; k<=N; k++){
-                if (Dist[j][k]>Dist[j][i]+Dist[i][k]){
-                    Dist[j][k] = Dist[j][i]+Dist[i][k];
-                }
-            }
-        }
-    }
-}
+using namespace std;
+
+#define INF 987654321
 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
+   ios_base::sync_with_stdio(false);
+   cin.tie(0); cout.tie(0);
+   
+   int N, M; 
+   cin >> N >> M;
 
-    cin >> N >> M;
+    long dis[N+1][N+1];
+    
     for (int i=1; i<=N; i++){
         for (int j=1; j<=N; j++){
-            if (i==j) Dist[i][j]=0;
-            else Dist[i][j]=INF;
+            dis[i][j]= INF;
+            if (i==j) dis[i][j]= 0;
         }
     }
-    for (int i=0; i<M; i++){
-        cin >> A >> B >> C;
-        if (Dist[A][B]>C) Dist[A][B] = C;
+
+    while (M--){
+        int a, b,c;
+        cin >> a >> b >> c;
+        if (dis[a][b] > c)
+            dis[a][b]= c;
     }
-    floyd();
+
+    for (int k=1; k<=N; k++){
+        for (int i=1; i<=N; i++){
+            for (int j=1; j<=N; j++){
+                if (dis[i][j] > dis[i][k]+dis[k][j])
+                    dis[i][j]= dis[i][k]+dis[k][j];
+            }
+        }
+    }
+
     for (int i=1; i<=N; i++){
         for (int j=1; j<=N; j++){
-            if (Dist[i][j]==987654321) cout << 0 << " ";
-            else cout << Dist[i][j] << " ";
+            if (dis[i][j]==INF) cout << 0 << " ";
+            else cout << dis[i][j] << " ";
         }
         cout << "\n";
     }
 
-    return 0;
+   return 0;
 }
