@@ -1,14 +1,9 @@
--- 코드를 작성해주세요
-WITH MAXCOLONY AS (
-SELECT MAX(SIZE_OF_COLONY) AS MAXCOLONY, YEAR(DIFFERENTIATION_DATE) as year
-FROM ECOLI_DATA
-GROUP BY year(DIFFERENTIATION_DATE)
-)
-
-SELECT YEAR(e.DIFFERENTIATION_DATE) as YEAR,
-(m.maxcolony-e.size_of_colony) as YEAR_DEV,
-e.id
-FROM ECOLI_DATA as e
-JOIN MAXCOLONY as m 
-on year(e.DIFFERENTIATION_DATE)= m.year
-ORDER BY 1, 2;
+# 특정 연도의 최대 대장균 정보를 담은 테이블을 따로 관리
+with MAX_COLONY as (
+    select YEAR(DIFFERENTIATION_DATE) as YEAR, MAX(SIZE_OF_COLONY) as MAX_SIZE
+    from ECOLI_DATA
+    group by YEAR(DIFFERENTIATION_DATE)
+) 
+select m.year as YEAR, (m.MAX_SIZE-e.SIZE_OF_COLONY) as YEAR_DEV, e.ID as ID
+from ECOLI_DATA e join MAX_COLONY m on (YEAR(e.DIFFERENTIATION_DATE)=m.YEAR)
+order by 1, 2;
