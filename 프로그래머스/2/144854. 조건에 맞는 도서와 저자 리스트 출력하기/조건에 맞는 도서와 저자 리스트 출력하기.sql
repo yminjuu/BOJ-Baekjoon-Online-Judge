@@ -1,5 +1,4 @@
--- 코드를 입력하세요
-SELECT BOOK_ID, AUTHOR_NAME, DATE_FORMAT(PUBLISHED_DATE, '%Y-%m-%d') as PUBLISHED_DATE
-FROM BOOK, AUTHOR
-WHERE BOOK.AUTHOR_ID=AUTHOR.AUTHOR_ID AND CATEGORY='경제'
-ORDER BY PUBLISHED_DATE;
+select book_id, author_name, date_format(published_date, '%Y-%m-%d')
+from book natural join author
+where category ='경제'
+order by 3;
