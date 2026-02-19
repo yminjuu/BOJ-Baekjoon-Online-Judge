@@ -1,5 +1,4 @@
--- 코드를 입력하세요
-SELECT ANIMAL_ID, ANIMAL_INS.ANIMAL_TYPE, ANIMAL_INS.NAME
-FROM ANIMAL_INS JOIN ANIMAL_OUTS USING (ANIMAL_ID)
-WHERE ANIMAL_INS.SEX_UPON_INTAKE LIKE 'Intact%' and (ANIMAL_OUTS.SEX_UPON_OUTCOME LIKE 'Neutered%' or ANIMAL_OUTS.SEX_UPON_OUTCOME LIKE 'Spayed%')
-ORDER BY ANIMAL_ID;
+select i.animal_id, i.animal_type, i.name
+from animal_ins i join animal_outs o on (i.animal_id=o.animal_id)
+where i.sex_upon_intake like ('intact%') and o.sex_upon_outcome not like ('intact%')
+order by 1;
