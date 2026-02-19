@@ -1,9 +1,9 @@
 -- 코드를 입력하세요
-SELECT f.flavor
-from july j join first_half f on j.flavor = f.flavor
-group by f.flavor
-order by sum(j.total_order)+f.total_order desc
+select g.flavor
+from first_half f join (
+    select flavor, sum(total_order) as total_order
+    from july
+    group by flavor
+) g on f.flavor=g.flavor
+order by f.total_order+g.total_order desc
 limit 3;
-
-# select *
-# from first_half;
