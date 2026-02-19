@@ -1,13 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <queue>
-#include <string>
 #include <climits>
 
 using namespace std;
-long dp[100001][2];
-long vec[100001];
+static vector<long> A, L, R;
 
 int main()
 {
@@ -17,33 +14,39 @@ int main()
    int N;
     cin >> N;
 
-    for (int i=0; i<N; i++){
-        cin >> vec[i];
+    A.resize(N+2);
+    L.resize(N+2);
+    R.resize(N+2);
+    // L[i], R[i]의 의미: i번째 원소를 "포함하는" 합 배열 중 가장 큰 것
+
+    for (int i=1; i<=N; i++){
+        cin >> A[i];
     }
 
-    dp[0][0] = max(vec[0], (long)0) ; dp[0][1] = vec[0];
-
-    for (int i=1; i<N; i++){
-        for (int k=0; k<2; k++){
-            if (k==0){
-                dp[i][0]= max(dp[i-1][0]+vec[i], vec[i]);
-            }
-            if (k==1) {
-                dp[i][0] = max(dp[i][0], dp[i-1][1]); 
-                dp[i][1] = max(dp[i-1][1]+vec[i], vec[i]);
-            }
-        }
+    // 왼쪽 기준 합 배열
+    L[0]= 0; long mx_base= A[1]; // 초깃값: 하나는 선택해야 한다
+    for (int i=1; i<=N; i++){
+        // 새로 시작하거나 앞의 연속 배열을 잇거나
+        L[i]= max(L[i-1]+ A[i], A[i]);
+        mx_base= max(mx_base, L[i]);
     }
 
-    long ans = LLONG_MIN;
-    for (int i=0; i<N; i++){
-        for (int j=0; j<2; j++){
-            if (i==0 && j==0) continue;
-            if (ans<dp[i][j]) ans=dp[i][j];
-        }
+    // 오른쪽 기준 합 배열
+    R[N+1]= 0;
+    for (int i=N; i!=0; i--){
+        R[i] = max(R[i+1]+A[i], A[i]);
     }
 
-    cout << ans;
-    
+    // 제거 로직은 따로 뺴준다
+    long mx = mx_base;
+
+    // i 범위: 양 끝을 제거하는 경우
+    for (int i=2; i<N; i++){
+        // i를 제거하는 경우
+        mx = max(mx, (long)L[i-1]+R[i+1]);
+    }
+
+    cout << mx;
+
    return 0;
 }
