@@ -1,6 +1,9 @@
 -- 코드를 작성해주세요
-select d.id, d.email, d.first_name, d.last_name
-from developers d, skillcodes s
-where s.code & d.skill_code > 0 and s.category='Front End'
-group by d.id, d.email, d.first_name, d.last_name
+select id, email, first_name, last_name
+from developers
+where exists (
+    select code
+    from skillcodes
+    where skill_code & code > 0 and category='Front End'
+)
 order by 1;
