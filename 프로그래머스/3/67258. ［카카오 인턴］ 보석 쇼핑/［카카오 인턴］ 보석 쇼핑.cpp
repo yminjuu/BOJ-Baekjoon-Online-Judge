@@ -6,60 +6,32 @@
 
 using namespace std;
 
- int minLength= INT_MAX;
-int st, en;
-int gemsCnt=0;
-vector<int> answer;
-map<string, int> mp; // 해당 보석이 마지막으로 나온 인덱스를 저장하는 map
-set<string> s;
-vector<string> gGems;
-
-void reduce(){
-    while (st<en && mp[gGems[st]]!=1){
-        mp[gGems[st]]--;
-        st++;
-    }
-    if (gemsCnt== s.size() && minLength > (en-st)){
-        minLength= en-st;
-        answer[0]= st+1;
-        answer[1]= en+1;
-    }
-}
-
 vector<int> solution(vector<string> gems) {
-    gGems = gems;
+    set<string> s(gems.begin(), gems.end()); // set 초기화(기본 오름차순)
     
-    s = set(gems.begin(), gems.end()); // set 초기화(기본 오름차순)
+    map<string, int> mp;
     
-    for (auto& tmp: s){
-        mp[tmp]= 0; // 개수 0으로 초기화
-    }
+    vector<int> answer = {1,  (int)gems.size()};
     
-    gemsCnt=0;
-    answer.push_back(st); answer.push_back(en);
+    int gemCnt=0; int minLength = INT_MAX;
+    int start=0;
     for (int i=0; i<gems.size(); i++){
-        en= i;
-        if (mp[gems[i]]==0){
-            // 아직 안 넣은 보석이라면
-            mp[gems[i]]= 1;
-            gemsCnt++;
-            
-            if (gemsCnt==s.size() && minLength > (en-st)){
-                minLength = en-st;
-                answer[0]= st+1;
-                answer[1]= en+1;
+        mp[gems[i]]++; // 현재 보석 추가
+        
+        while (mp[gems[start]]>1){
+            mp[gems[start]]--;
+            start++;
+        }
+        
+        if (mp.size()==s.size()){
+            // 모든 보석을 다 모았다면
+            if (minLength > i-start) {
+                minLength= i-start;
+                answer[0]= start+1;
+                answer[1]= i+1;
             }
-            // 현재의 start를 포기하는 방법을 사용한다.
-            reduce();
         }
-        // 이미 넣은 보석이라면
-        else {
-            mp[gems[i]]= mp[gems[i]]+ 1;
-            // 만약 보석이 앞에 또 있으면 start를 줄일 수 있다.
-            // 구간 줄이기 함수
-            reduce();
-        }
-    }  
+    }
     
     return answer;
 }
