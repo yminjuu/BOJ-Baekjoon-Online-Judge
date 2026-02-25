@@ -8,11 +8,8 @@
 using namespace std;
 
 deque<int> wheel[4];
-int rel[4][4];
 int visited[4];
 
-// 톱니의 동작: 시계방향(1)으로 돌면 8번에 있던 톱니가 1번으로 간다
-        // 반시계방향(-1)으로 돌면 1번에 있던 톱니가 8번으로 간다
 void rotate(int idx, int direction){
     if (direction==1){
         wheel[idx].push_front(wheel[idx].back());
@@ -23,47 +20,20 @@ void rotate(int idx, int direction){
     }
 }
 
-void rotateBfs(int startIdx, int direction){
-    queue<pair<int,int>> rq; // 회전 예정 저장
-    queue<pair<int,int>> q; // 톱니 인덱스와 방향 저장
-    
-    rq.push({startIdx, direction});
-    q.push({startIdx, direction});
-    fill(&visited[0], &visited[3]+1, 0);
+// side 0: 양쪽 확인, -1: 왼쪽 확인, 1: 오른쪽 확인
+void rotateBfs(int num, int direction, int side){
+    int nextDirection = direction == 1 ? -1 : 1;
+    // 왼쪽 톱니바퀴 확인
+     if ((side==0 || side == -1) && num-1 >=0 ){
+         if (wheel[num-1][2]!=wheel[num][6]) rotateBfs(num-1, nextDirection, -1);
+     } 
 
-    visited[startIdx]= 1;
-
-    while (!q.empty()){
-        startIdx= q.front().first;
-        direction= q.front().second;
-        q.pop();
-        
-        int newDirection = direction == -1 ? 1 : -1; 
-        
-        for (int i=0; i<4; i++){
-            
-            if (rel[startIdx][i]==1 && !visited[i]){
-                visited[i]= 1;
-                
-                if (i> startIdx) {
-                    // 현재 톱니 기준 오른쪽 2 -> 6
-                    if (wheel[startIdx][2] == wheel[i][6]) continue;
-                } else {
-                     // 현재 톱니 기준 왼쪽 7 -> 3
-                    if (wheel[startIdx][6] == wheel[i][2]) continue;
-                }
-                q.push({i, newDirection});
-                rq.push({i, newDirection});
-                }
-            }   
+    // 오른쪽 톱니바퀴 확인
+    if ((side==0 || side == 1) && num+1 <= 3) {
+        if (wheel[num][2]!=wheel[num+1][6]) rotateBfs(num+1, nextDirection, 1);
     }
 
-    while (!rq.empty()){
-        startIdx= rq.front().first;
-        direction= rq.front().second;
-        rq.pop();
-        rotate(startIdx, direction);
-    }
+    rotate(num, direction); // 양쪽 모두 전파 후 rotate
 }
 
 int main()
@@ -71,13 +41,6 @@ int main()
    ios_base::sync_with_stdio(false);
    cin.tie(0); cout.tie(0);
 
-    rel[0][1] = 1;
-    rel[1][0]= 1;
-    rel[1][2]= 1;
-    rel[2][1]= 1;
-    rel[2][3]=1;
-    rel[3][2]=1;
-   
    for (int i=0; i<4; i++){
        char c;
        for (int j=0; j<8; j++){
@@ -92,13 +55,13 @@ int main()
     while (t--){
         int a,b;
         cin >> a >> b;
-        rotateBfs(a-1,b);
+        rotateBfs(a-1,b,0);
     }
 
     int ans= 0;
     for (int i=0; i<4; i++){
         if (wheel[i][0]==1){
-            ans+= (int)pow(2, i);
+            ans+= (1 << i);
         }
     }
 
