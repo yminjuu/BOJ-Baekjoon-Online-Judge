@@ -2,33 +2,28 @@
 #include <vector>
 
 using namespace std;
-int realAns, length, sum=0;
 
-void addSub(int index, vector<int> numbers, int target){
-    // 더하기
-    sum+=numbers[index];
-    if (index!=length) addSub(index+1, numbers, target);
-    else {
-        if (target==sum) realAns++;
+vector<int> number;
+int tar;
+int ans=0;
+
+void dfs(int n, int curr){
+    // 끝까지 도달
+    if (n==number.size()){
+        if (curr==tar) ans++;
+        return;
     }
     
-    // 빼기
-    sum-=(numbers[index]*2);
-    if (index!=length) addSub(index+1, numbers, target);
-    else {
-        if (target==sum) realAns++;
-    }
-    
-    // 원상 복구
-    sum+=numbers[index];
-    return;
+    int tmp = curr;
+    dfs(n+1, curr+number[n]);
+    dfs(n+1, curr-number[n]);
 }
 
 int solution(vector<int> numbers, int target) {
-    int answer = 0;
-    length = numbers.size()-1;
+    number= numbers;
+    tar= target;
     
-    addSub(0, numbers, target);
-    
-    return realAns;
+    dfs(0, 0);
+  
+    return ans;
 }
