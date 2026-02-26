@@ -1,38 +1,47 @@
 #include <vector>
 #include <queue>
+#include <stack>
+#include <climits>
 
 using namespace std;
+using p = pair<int,int>;
 
-int visited[102][102]= {0}; 
-// 한번 갔던 길이 불가능하다고 판단됐다면, 다시 방문해서 또다시 판단할 필요 없음
+int ans[102][102]; // 이 좌표까지 가는 최솟값
+int dx[4]= {0,0,1,-1};
+int dy[4]= {1,-1,0,0};
 
 int solution(vector<vector<int> > maps)
 {
-   int x=0, y=0;
-    int ySize = maps.size(); int xSize= maps[0].size();
-    queue<pair<pair<int,int>, int>> stck;
-    int basisArr[4][2] = {{1,0}, {0,1}, {-1, 0}, {0, -1}};
+    int n = maps.size(); int m = maps[0].size();
+    fill(&ans[0][0], &ans[101][101], INT_MAX);
     
-    stck.push({{0,0}, 1});
-    visited[0][0]=1;
-    while (!stck.empty()){
-        x= stck.front().first.first; y=stck.front().first.second;
-        int cnt= stck.front().second;
-        stck.pop();
+    // 시작 (0,0) 목표 (n-1, m-1)
+    
+    queue<p> q;
+    q.push({0,0});
+    ans[0][0]=1;
+
+    while (!q.empty()){
+        int x = q.front().first; int y= q.front().second;
+        q.pop();
         
-        if (x==xSize-1 && y==ySize-1) return cnt;
-        
-        // 그 후에 갈 길은 stck에 넣어줌
-        // 갈 수 없는 길, 이미 방문했던 길은 제외한다.
-        for (int i=0; i<4; i++){
-            int nx= x + basisArr[i][0];
-            int ny= y + basisArr[i][1];
-            
-            if (nx>=0 && nx<xSize && ny>=0 && ny<ySize && !visited[ny][nx] && maps[ny][nx]) {
-                visited[ny][nx]= 1;
-                stck.push({{nx, ny}, cnt+1});
+        if (x==n-1 && y==m-1) {
+            continue;
         }
+        
+        for (int i=0; i<4; i++){
+            int newX= x+dx[i]; int newY= y+dy[i];
+            if (newX>=0 && newX <n && newY>=0 && newY<m && maps[newX][newY]){
+                if (ans[newX][newY] <= ans[x][y]+1) continue; 
+                
+                // 이 부분을 다시 보기 (안 그럼 시간 초과)
+                
+                ans[newX][newY]= min(ans[x][y]+1, ans[newX][newY]);
+                q.push({newX, newY});
             }
         }
-    return -1;
+    }
+    
+    if (ans[n-1][m-1]==INT_MAX) return -1;
+    else return ans[n-1][m-1];
 }
