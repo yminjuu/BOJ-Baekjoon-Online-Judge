@@ -1,13 +1,8 @@
--- 코드를 작성해주세요
-SELECT COUNT(*) as FISH_COUNT, MAX(LENGTH) as MAX_LENGTH, FISH_TYPE
-FROM FISH_INFO
-GROUP BY FISH_TYPE
-HAVING AVG(
-    CASE
-        WHEN LENGTH IS NULL THEN 10
-        ELSE LENGTH
-    END
-)>=33
-ORDER BY FISH_TYPE;
-
---
+select count(id) as fish_count, max(length) as max_length, fish_type
+from fish_info
+group by fish_type
+having avg(
+    case when length is null then 10
+    else length end
+) >=33
+order by 3;
