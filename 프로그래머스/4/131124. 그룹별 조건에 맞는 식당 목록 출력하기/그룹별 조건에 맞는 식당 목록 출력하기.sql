@@ -1,13 +1,22 @@
 -- 코드를 입력하세요
-with r as 
-( select member_id, review_text, review_date
- from rest_review
- where member_id =
-(SELECT member_id
-from rest_review
+-- 최대 리뷰 개수
+with max as (
+    select count(review_id) as cnt
+    from member_profile natural join rest_review
+    group by member_id
+),
+
+maxid as (select member_id
+from member_profile natural join rest_review
 group by member_id
-order by count(*) desc
-limit 1)) 
-select m.member_name, review_text, date_format(review_date, '%Y-%m-%d')
-from member_profile m join r on (m.member_id=r.member_id)
-order by 3, 2;
+having count(review_id) = (
+    select max(cnt)
+    from max
+))
+
+select MEMBER_NAME,	REVIEW_TEXT,	date_format(REVIEW_DATE, '%Y-%m-%d')
+from  member_profile natural join rest_review
+where member_id in (
+    select member_id
+    from maxid
+) order by 3, 2;
