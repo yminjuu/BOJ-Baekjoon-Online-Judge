@@ -1,5 +1,3 @@
-# 특정 연도의 최대 대장균 정보를 담은 테이블을 따로 관리
-SELECT YEAR(DIFFERENTIATION_DATE) as YEAR, 
-MAX(SIZE_OF_COLONY) OVER (PARTITION BY YEAR(DIFFERENTIATION_DATE)) - SIZE_OF_COLONY as YEAR_DEV, ID
-FROM ECOLI_DATA
+select year(DIFFERENTIATION_DATE) as year, (max(size_of_colony) over (partition by year(DIFFERENTIATION_DATE)) - size_of_colony) as year_dev, id
+from ecoli_data
 order by 1, 2;
