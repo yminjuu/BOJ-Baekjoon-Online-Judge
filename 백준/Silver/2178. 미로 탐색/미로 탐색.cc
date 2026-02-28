@@ -1,68 +1,60 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 #include <queue>
+#include <string>
+
 using namespace std;
-int N, M;
-char c;
-int arr[102][102] = {
-    0,
-};
-int dist[102][102] = {
-    0,
-};
-queue<pair<int, int>> q;
+int dx[4]= {0,0,1,-1};
+int dy[4]= {1,-1,0,0};
+int path[102][102];
+int visited[102][102];
 
-int DFS(int x, int y)
-{
-    while (!q.empty())
-    {
-        q.pop();
-        if (arr[x + 1][y] && !dist[x + 1][y])
-        {
-            q.push(make_pair(x + 1, y));
-            dist[x + 1][y] = dist[x][y] + 1;
-        }
-        if (arr[x][y + 1] && !dist[x][y + 1])
-        {
-            q.push(make_pair(x, y + 1));
-            dist[x][y + 1] = dist[x][y] + 1;
-        }
-        if (arr[x - 1][y] && !dist[x - 1][y])
-        {
-            q.push(make_pair(x - 1, y));
-            dist[x - 1][y] = dist[x][y] + 1;
-        }
-        if (arr[x][y - 1] && !dist[x][y - 1])
-        {
-            q.push(make_pair(x, y - 1));
-            dist[x][y - 1] = dist[x][y] + 1;
-        }
-        x = q.front().first;
-        y = q.front().second;
-    }
-    return 0;
-}
+typedef struct X {
+    int x, y;
+} X;
 
+// 1 => 이동 가능 
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
+   ios_base::sync_with_stdio(false);
+   cin.tie(0); cout.tie(0);
+   
+   int N, M; 
+   cin >> N >> M;
 
-    cin >> N >> M;
-    for (int i = 1; i <= N; i++)
-    {
-        for (int j = 1; j <= M; j++)
-        {
+    for (int i=1; i<=N; i++){
+        for (int j=1; j<=M; j++){
+            char c;
             cin >> c;
-            arr[i][j] = c - '0';
+            path[i][j]= c-'0';
+        }
+    }
+    
+    queue<pair<X, int>> q;
+    q.push({{1,1}, 1});
+    visited[1][1]= 1;
+
+    //BFS
+    while (!q.empty()){
+        int x = q.front().first.x; int y= q.front().first.y;
+        int cnt = q.front().second;
+        q.pop();
+
+        if (x==N && y==M) {
+            cout << cnt;
+            return 0;
+        }
+
+        for (int i=0; i<4; i++){
+            int newX= x + dx[i];
+            int newY= y+ dy[i];
+            if (newX>=1 && newY>=1 && newX<=N && newY<=M && !visited[newX][newY] && path[newX][newY]){
+                visited[newX][newY] = 1;
+                q.push({{newX, newY}, cnt+1});
+            }
         }
     }
 
-    q.push(make_pair(1, 1));
-    dist[1][1] = 1;
-    DFS(1,1);
-
-    cout << dist[N][M];
-    return 0;
+   return 0;
 }
