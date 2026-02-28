@@ -1,18 +1,4 @@
--- 코드를 입력하세요
-# SELECT USER_ID, PRODUCT_ID
-# FROM ONLINE_SALE as A
-# WHERE (
-#     SELECT COUNT(*)
-#     FROM ONLINE_SALE as O
-#     WHERE O.USER_ID = A.USER_ID AND O.PRODUCT_ID= A.PRODUCT_ID
-# ) > 1
-# GROUP BY USER_ID, PRODUCT_ID
-# ORDER BY A.USER_ID, A.PRODUCT_ID DESC;
-
-SELECT USER_ID, PRODUCT_ID
-FROM ONLINE_SALE
-GROUP BY USER_ID, PRODUCT_ID
-HAVING COUNT(*)>1
-ORDER BY USER_ID, PRODUCT_ID DESC;
-
-# unique 한 걸 제외한다
+select a.user_id, a.product_id
+from online_sale a join online_sale b on (a.user_id=b.user_id) and (a.product_id=b.product_id) and (a.online_sale_id!= b.online_sale_id)
+group by a.user_id, a.product_id
+order by 1, 2 desc;
