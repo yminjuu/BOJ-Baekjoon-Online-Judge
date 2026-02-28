@@ -5,22 +5,26 @@
 #include <string>
 
 using namespace std;
-vector<int> parent;
 
-int find(int a){
-    if (parent[a]==a) return a;
-    else return parent[a] = find(parent[a]);
+int parent[1000005];
+
+// 최상위 원소를 찾아 반환 / parent 갱신
+int find(int n){
+    if (parent[n]==n) return n;
+    else return parent[n]= find(parent[n]);
 }
 
 void unionFunc(int a, int b){
-    int parentA = find(a);
-    int parentB = find(b);
+    int pA= find(a);
+    int pB= find(b);
 
-    // 부모 노드 수준에서 union이 발생해야 한다.
-    if (parentA < parentB) parent[parent[b]] = parentA; // 작은 값이 대표값
-    else parent[parent[a]] = parentB;
+    if (pA!=pB) {
+        // 부모 집합끼리 합친다
+        parent[pB]= pA; 
+    }
 }
 
+// 집합 0~n 총 n+1개
 int main()
 {
    ios_base::sync_with_stdio(false);
@@ -28,18 +32,23 @@ int main()
    
    int N, M; 
    cin >> N >> M;
-    parent.resize(N+1);
-    for (int i=0; i<=N; i++){
+
+    // parent 배열 초기화
+    for (int i=0;  i<=N; i++){
         parent[i]= i;
     }
 
-    int i, a, b;
     while (M--){
-        cin >> i >> a >> b;
-        if (i==0) unionFunc(a,b);
-        else {
-            if (find(a)==find(b)) cout << "YES\n";
-            else cout << "NO\n";
+        int method, a, b;
+        cin >> method >> a >> b;
+        if (method==0){
+            // 집합 합치기
+            unionFunc(a,b);
+        } else if (method==1){
+            // 같은 집합에 포함되어 있는지 확인
+            if (find(a)==find(b)){
+                cout << "YES\n";
+            } else cout << "NO\n";
         }
     }
 
