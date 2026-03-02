@@ -6,13 +6,10 @@
 
 using namespace std;
 
-int GCD(int a, int b){
-    int r = a%b;
-    if (r==0) return b; 
-    
-    a = b; 
-    b = r;
-    return GCD(a,b); 
+// 최대 공약수 구하기
+long gcd(int a,int b){
+    if (b==0) return a;
+    else return gcd(b, a%b);
 }
 
 int main()
@@ -20,18 +17,15 @@ int main()
    ios_base::sync_with_stdio(false);
    cin.tie(0); cout.tie(0);
    
-    int T, a,b;
+    int T;
     cin >> T;
-    
+
     while (T--){
+        long a,b;
         cin >> a >> b;
-        if (a<b){
-            int tmp= b;
-            b= a;
-            a= tmp;
-        }
-        int gcd= GCD(a,b);
-        cout << gcd*(a/gcd)*(b/gcd) << "\n";
+        long gcdNum = gcd(a,b);
+        cout << a/gcdNum * b/gcdNum * gcdNum  << "\n";
     }
-    return 0;
+    
+   return 0;
 }
