@@ -2,49 +2,52 @@
 #include <vector>
 #include <climits>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-long ans=0;
-int visited[102]; 
-int linked[102][102];
-vector<int> nodes;
+int parent[102];
+
+int findFunc(int a){
+    if (parent[a]==a) return a;
+    
+    return parent[a]= findFunc(parent[a]);
+}
+
+void unionFunc (int a, int b){
+    int pA= findFunc(a);
+    int pB= findFunc(b);
+    
+    if (pA!=pB) parent[pB]= pA; // 집합의 부모(루트)끼리 연결
+}
+
+bool cmp (const vector<int>& a, const vector<int>& b) {
+       return a[2] < b[2]; // 작은 게 먼저
+}
 
 int solution(int n, vector<vector<int>> costs) {
+    int ans=0;
+    sort(costs.begin(), costs.end(), cmp);
     
-    for (int i=0; i<costs.size(); i++){
-        if (costs[i].size()==3){
-            int s = costs[i][0];
-            int e = costs[i][1];
-            int cost = costs[i][2];
-
-            linked[s][e]= cost;
-            linked[e][s]= cost;   
-        }
+    for (int i=0; i<n; i++){
+        parent[i]= i;
     }
     
-    // 0번 노드에서 시작
-    nodes.push_back(0); visited[0]= 1;
-    
-    while (nodes.size()<n){
-        long minCost=  LLONG_MAX;
-        int minIdx;
-        // 현재 갈 수 있는 노드에 대해
-        for (int i=0; i<nodes.size(); i++){
-            int currNode= nodes[i]; // 현재 노드 번호
-            // 모든 경로에 대하여
-            for (int j=0; j<n; j++){
-                if (linked[currNode][j]!=0 && !visited[j] && minCost > linked[currNode][j]){
-                    // 아직 방문하지 않았다면
-                    minCost = linked[currNode][j];
-                    minIdx= j;
-                }
-            }
-        }
+    for (int i=0; i<costs.size(); i++){
+        // 비용이 적은 엣지부터 탐색
+        int s = costs[i][0];
+        int e = costs[i][1];
+        int cost= costs[i][2];
         
-        nodes.push_back(minIdx);
-        visited[minIdx]= 1;
-        ans+= minCost;
+        
+        // 둘이 어느 집합에 포함되어 있는지 확인
+        int pS= findFunc(s);
+        int pE= findFunc(e);
+        if (pS!=pE){
+            // 아직 집합이 연결되지 않았다면
+            unionFunc(pS, pE);
+            ans+= cost;
+        }
     }
     
     return ans;
