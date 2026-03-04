@@ -5,6 +5,8 @@
 #include <string>
 
 using namespace std;
+vector<int> vec[32001]; // 연결된 노드를 저장
+int indegree[32001]; // 진입 차수를 저장
 
 int main()
 {
@@ -13,35 +15,30 @@ int main()
    
    int N, M; 
    cin >> N >> M;
-    vector<vector<int>> A;
-    vector<int> indegree; // 진입 차수
-    A.resize(N+1);
-    indegree.resize(N+1);
-    fill(indegree.begin(), indegree.end(), 0);
 
     while (M--){
-        int a, b;
+        int a,b;
         cin >> a >> b;
-        A[a].push_back(b);
+        vec[a].push_back(b);
         indegree[b]++;
     }
 
-    queue<int> q; vector<int> ans;
+    queue<int> q;
     for (int i=1; i<=N; i++){
-        if (!indegree[i]) {
+        if (indegree[i]==0) {
             q.push(i);
         }
     }
 
     while (!q.empty()){
-        int p = q.front(); q.pop(); ans.push_back(p);
-        cout << p << " ";
-        
-        // 연결된 진입차수 감소시킴
-        for (int i=0; i<A[p].size(); i++){
-            indegree[A[p][i]]--;
+        int startNode = q.front();
+        cout << startNode << " ";
+        q.pop();
 
-            if (!indegree[A[p][i]]) q.push(A[p][i]);
+        for (int i=0; i<vec[startNode].size(); i++){
+            int nextNode = vec[startNode][i];
+            indegree[nextNode]--;
+            if (indegree[nextNode]==0) q.push(nextNode);
         }
     }
 
