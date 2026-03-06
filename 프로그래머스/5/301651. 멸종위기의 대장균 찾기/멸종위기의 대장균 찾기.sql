@@ -17,9 +17,10 @@ parents as (
 )
 
 select sum(
-    case when id in (select parents_ids from parents) then 0
-    else 1
+    case when id not in (select parents_ids from parents) then 1
+    else 0
     end
 ) as count, generation
 from g
-group by generation;
+group by generation
+order by generation;
