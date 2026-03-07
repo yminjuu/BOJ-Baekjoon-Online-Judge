@@ -1,34 +1,39 @@
 #include <string>
 #include <vector>
-#include <queue>
+#include <stack>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
-
-struct cmp {
-    bool operator()(pair<int,int> &a, pair<int,int> &b){
-//         숫자가 큰 순서대로
-        return a.first < b.first; // 더 뒤로 가는 기준 : 작아야 한다.
-    }  
-};
+int ans[100005];
 
 vector<int> solution(vector<int> prices) {
     vector<int> answer;
-    priority_queue<pair<int,int>, vector<pair<int,int>>, cmp> pq;
-    for (int i=0; i<prices.size(); i++) answer.push_back(0);
+    stack<int> stck;
+    int N= prices.size();
     
-    int i=0;
-    for (; i<prices.size(); i++){
-        while (!pq.empty() && prices[i] < pq.top().first){
-            answer[pq.top().second] = i-pq.top().second;
-            pq.pop();
+    ans[N-1]= 0; stck.push(prices[N-1]);
+    
+    for (int i=N-2; i>=0; i--){
+        if (stck.top() >= prices[i]){ // 내가 더 작음
+            while (!stck.empty() && stck.top() > prices[i]){
+                stck.pop();
+            }
+            stck.push(prices[i]);
+            ans[i]= (N-1) - i; // 내려가지 않음
+        } else {
+            // 내가 더 큼 -> 언젠가 내려감.
+            int nextIdx= i+1;
+            while (prices[nextIdx] >= prices[i] && nextIdx<N){
+                nextIdx= nextIdx + ans[nextIdx];
+            }
+            ans[i]= nextIdx- i;
         }
-        pq.push(make_pair(prices[i], i));
     }
     
-    i--;
-    while (!pq.empty()){
-        answer[pq.top().second] = i-pq.top().second;
-        pq.pop();
+    for (int i=0; i<N; i++){
+        answer.push_back(ans[i]);
     }
+    
     return answer;
 }
