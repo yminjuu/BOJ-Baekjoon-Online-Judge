@@ -1,47 +1,56 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <iostream>
 #include <climits>
 
 using namespace std;
 using p = pair<int,int>;
 
+vector<vector<int> > g_map;
+int N,M;
+int visited[102][102];
 int ans[102][102]; // 이 좌표까지 가는 최솟값
 int dx[4]= {0,0,1,-1};
 int dy[4]= {1,-1,0,0};
 
-int solution(vector<vector<int> > maps)
-{
-    int n = maps.size(); int m = maps[0].size();
-    fill(&ans[0][0], &ans[101][101], INT_MAX);
-    
-    // 시작 (0,0) 목표 (n-1, m-1)
-    
+void bfs(int x, int y){
     queue<p> q;
-    q.push({0,0});
-    ans[0][0]=1;
-
-    while (!q.empty()){
-        int x = q.front().first; int y= q.front().second;
+    q.push({x,y});
+    visited[x][y]= 1;
+    ans[x][y]= 1;
+    
+    while (!q.empty()) {
+        x= q.front().first;
+        y= q.front().second;
         q.pop();
         
-        if (x==n-1 && y==m-1) {
-            continue;
-        }
-        
-        for (int i=0; i<4; i++){
-            int newX= x+dx[i]; int newY= y+dy[i];
-            if (newX>=0 && newX <n && newY>=0 && newY<m && maps[newX][newY]){
-                if (ans[newX][newY] <= ans[x][y]+1) continue; 
-                
-                // 이 부분을 다시 보기 (안 그럼 시간 초과)
-                
-                ans[newX][newY]= min(ans[x][y]+1, ans[newX][newY]);
-                q.push({newX, newY});
+        for (int d=0; d<4; d++){
+            int nextX= x+dx[d];
+            int nextY= y+dy[d];
+            if (nextX>=0 && nextY>=0 && nextX<N && nextY<M && !visited[nextX][nextY] && g_map[nextX][nextY]!=0){
+                visited[nextX][nextY]= 1;
+                q.push({nextX,nextY});
+                ans[nextX][nextY]= ans[x][y]+1; // 이때만 최초 발견/ 최단 거리이므로 넣어줌
             }
         }
     }
+}
+
+// 0:벽, 1: 벽 없음
+int solution(vector<vector<int> > maps)
+{
+    g_map= maps;
+   N= maps.size(); M =maps[0].size();
     
-    if (ans[n-1][m-1]==INT_MAX) return -1;
-    else return ans[n-1][m-1];
+    for (int i=0; i<N; i++){
+        for (int j=0; j<M; j++){
+            cin >> maps[i][j];
+        }
+    }
+    
+    bfs(0,0);
+    
+    if (ans[N-1][M-1]==0) return -1;
+    else return ans[N-1][M-1];
 }
