@@ -7,42 +7,69 @@
 using namespace std;
 #define MAX 987654321
 
+struct Road {
+    int e, t;
+    bool operator < (const Road& tmp) const {
+        return t > tmp.t; // pq는 반대
+    }
+};
+
+int N,M,X;
+vector<Road> path[1002];
+
+int dijkstra(int s, int e){
+    int minPath[N+1];
+    fill(&minPath[0], &minPath[N]+1, MAX);
+    priority_queue<Road> pq;
+
+    pq.push({s, 0});
+    while (!pq.empty()){
+        int e= pq.top().e; int time = pq.top().t;
+        pq.pop();
+
+        // 제일 먼저 나온 최단경로일 때만
+        if (minPath[e] > time){
+            minPath[e]= time;
+
+            // 방문하게 된 노드에서 연결된 노드
+            for (int i=0; i<path[e].size(); i++){
+                int next = path[e][i].e;
+                int nextT =path[e][i].t;
+
+                // 유의미한 경로일 때에만
+                if (minPath[next] > minPath[e]+nextT){
+                    pq.push({next, minPath[e]+nextT});
+                }
+            }
+        }
+    }
+
+    return minPath[e];
+}
+
 int main()
 {
    ios_base::sync_with_stdio(false);
    cin.tie(0); cout.tie(0);
    
-   int N, M, X;
-    cin >> N >> M >> X;
+   cin >> N >> M >> X;
 
-    int path[1002][1002]; // 인접 배열
-    fill(&path[0][0], &path[1001][1001]+1, MAX); // 초기화
-    
-    for (int i=1; i<=N; i++){
-        // 자기 자신 초기화
-        path[i][i]= 0;
-    }
-    
+    // 인접 리스트 생성
     while (M--){
         int s, e, t;
         cin >> s >> e >> t;
-        path[s][e]= t;
+        path[s].push_back({e,t});
     }
 
-    // 플로이드워셜 적용
-    for (int k= 1; k<=N; k++){ // 경유지 k
-        for (int s= 1; s<=N; s++){
-            for (int e=1; e<=N; e++){
-                path[s][e] = min(path[s][e], path[s][k]+path[k][e]);
-            }
-        }
-    }
-
-    int cost[N+1];
-    int mx = 0;
+    // 모든 노드에서 다익스트라로 최단 왕복 경로 구해서 max 값과 비교
+    int mx=0;
     for (int i=1; i<=N; i++){
-        cost[i] = path[i][X]+ path[X][i];
-        mx = max(cost[i], mx);
+        int cost=0;
+
+        cost+= dijkstra(i, X);
+        cost+= dijkstra(X,i);
+
+        mx = max(mx, cost);
     }
 
     cout << mx;
