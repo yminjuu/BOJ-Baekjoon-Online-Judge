@@ -8,19 +8,7 @@
 using namespace std;
 
 struct Rate {
-    int gold, silver, bronze;
-};
-
-struct cmp{
-    bool operator() (const Rate& a, const Rate& b) const{
-        if (a.gold==b.gold){
-            if (a.silver==b.silver){
-                return a.bronze > b.bronze;
-            }
-            else return a.silver > b.silver;
-        } 
-        else return a.gold > b.gold;
-    }
+    int g,s,b;
 };
 
 int main()
@@ -31,27 +19,25 @@ int main()
    int N, K;
     cin >> N >> K;
 
-    map<Rate, int, cmp> rateMap;
-    Rate ansRate;
-
+    vector<Rate> vec(N+2);
     for (int i=1; i<=N; i++){
         int idx, g, s, b;
         cin >> idx >> g >> s >> b;
-        rateMap[{g,s,b}]++;
-
-        if (idx==K) ansRate = {g,s,b};
+        vec[idx] = {g,s,b};
     }
 
+    // K보다 큰 국가의 개수를 count한다
     long long rate = 0;
-    for (auto& [key, value] : rateMap){
-        auto [g,s,b]= key;
-
-        if ((g==ansRate.gold && s==ansRate.silver) && (b==ansRate.bronze)){
-            cout << rate + 1;
-            break;
-        }
-        rate += value;
+    for (int i=1; i<=N; i++){
+        auto [g,s,b]= vec[i];
+        if (g==vec[K].g){
+            if (s==vec[K].s){
+                if (b>vec[K].b) rate++;
+            } else if (s>vec[K].s) rate++;
+        } else if (g > vec[K].g) rate++;
     }
 
+    cout << rate + 1;
+   
    return 0;
 }
