@@ -63,7 +63,6 @@ int main()
 
         // 만약 더 작은 경로로 이미 방문했다면 패스
         if (cost > path[curr]) continue;
-        path[curr]= cost; // 갱신
         
         // 여기서 방문할 수 있는 가까운 정점을 pq에 넣음
         for (int i=0; i<edge[curr].size(); i++) {
@@ -72,6 +71,7 @@ int main()
             if (path[next] <= path[curr]+ nextCost) continue; 
             // 이미 더 작은 경로라면 패스
 
+            path[next]= path[curr]+ nextCost; // 미리 갱신 (쓸데없는 push 발생 안 하도록)
             pq.push({path[curr]+nextCost, next});
         }
     }
