@@ -9,27 +9,13 @@ function solution(){
     }
     let biggest= Math.max(...arr);
 
-    //////// dp 사용 : 차곡차곡 쌓아나가기
-
-    let dp = [];
-
-    // (1) 1 사용
-    for (let i=1; i<= biggest; i++){
-        dp[i]= 1;
-    }
-
-    // (2) 2 사용
-    for (let i=1; i<= biggest; i++){
-        // 2가 최대로 들어갈 수 있는 횟수
-        let n = Math.floor(i/2);
-        dp[i] += n;
-    }
-
-    // (3) 3 사용
-    dp[3]+=1;
-    for (let i=4; i<= biggest; i++){
-        dp[i] += dp[i-3];
-    }
+    let dp = new Array(biggest+1).fill(0);
+    dp[0]= 1; // 2, 3일 때의 초깃값이 옳게 들어가도록
+    for (let i=1; i<=3; i++){
+        for (let j=i; j<= biggest; j++){
+            dp[j] += dp[j-i];
+        }
+    }    
 
     let ans = [];
     for (let i=0; i<arr.length; i++){
