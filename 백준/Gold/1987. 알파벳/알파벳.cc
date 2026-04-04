@@ -13,36 +13,30 @@ using p = pair<int,int>;
 int R, C;
 int arr[21][21];
 int ans =0;
-int alphabet[26];
-int visited[21][21];
 
 int dx[4]= {1,-1,0,0};
 int dy[4]= {0,0,1,-1};
 
-void dfs(int x, int y, int path){
-    ans = max(ans, path);
+// 비트마스킹 활용 DFS
+// 방문배열 필요 X
+void dfs(int x, int y, int alphabet_bit, int path){
+    ans = max(path, ans);
     for (int d=0; d<4; d++){
-        int nextX= x+dx[d]; int nextY= y+dy[d];
-        if (nextX<0 || nextY<0 || nextX>=R || nextY>=C) continue;
+        int newX= x+dx[d];
+        int newY= y+dy[d];
+        if (newX<0 || newY<0 || newX>=R || newY>=C) continue;
 
-        if (alphabet[arr[nextX][nextY]]!=1 && !visited[nextX][nextY]) {
-            alphabet[arr[nextX][nextY]]= 1;
-            visited[nextX][nextY]= 1;
-            dfs(nextX, nextY, path+1);
-            alphabet[arr[nextX][nextY]]= 0;
-            visited[nextX][nextY]= 0;
+        if (!(alphabet_bit & (1 << arr[newX][newY]))){
+            dfs(newX, newY, alphabet_bit | (1 << arr[newX][newY]), path+1);
         }
     }
 }
-
 int main()
 {
    ios_base::sync_with_stdio(false);
    cin.tie(0); cout.tie(0);
    
     cin >> R >> C;
-
-    fill(&visited[0][0], &visited[20][20]+1, 0);
 
     for (int i=0; i<R; i++){
         string str;
@@ -52,9 +46,8 @@ int main()
         }
     }
 
-    visited[0][0]= 1;
-    alphabet[arr[0][0]]=1;
-    dfs(0,0,1);
+    int initial_bit = (1 << arr[0][0]);
+    dfs(0,0, initial_bit, 1);
 
     cout << ans;
 
