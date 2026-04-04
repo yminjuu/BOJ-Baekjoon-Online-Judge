@@ -24,7 +24,6 @@ function solution(){
     let N= Number(input[0]);
     candidate = new Array(N+1).fill(0);
 
-    let dp = new Array(N+1).fill(0); // 이 값이 저장된 LIS 배열의 인덱스
     let maxLth = 0;
 
     for (let i=1; i<=N; i++){
@@ -33,11 +32,9 @@ function solution(){
         if (candidate[maxLth] < num){
             // 붙을 수 있음
             candidate[++maxLth]= num;
-            dp[num]= maxLth;
         } else {
             let idx= find(0, maxLth, num);
             candidate[idx]= num;
-            dp[num]= idx;
         }
     }
 
