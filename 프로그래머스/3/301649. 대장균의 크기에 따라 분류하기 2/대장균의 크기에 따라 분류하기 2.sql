@@ -1,12 +1,13 @@
-SELECT A.ID, 
-CASE 
-WHEN B.COLONY_TILE = 1 then 'LOW'
-WHEN B.COLONY_TILE = 2 then 'MEDIUM'
-WHEN B.COLONY_TILE = 3 then 'HIGH'
-else 'CRITICAL'
-end as COLONY_NAME
-FROM ECOLI_DATA A natural join (
-    select ID, NTILE(4) OVER (ORDER BY SIZE_OF_COLONY ASC) as COLONY_TILE
-    FROM ECOLI_DATA
-) B
-order by 1 asc;
+# NTILE(4) OVER (ORDER BY SIZE_OF_COLONY ASC) as COLONY_TILE
+
+select a.id, case
+    when a.colony_ntile = 1 then 'LOW'
+    when a.colony_ntile = 2 then 'MEDIUM'
+    when a.colony_ntile = 3 then 'HIGH'
+    else 'CRITICAL'
+end as colony_name
+from (
+    select id, ntile(4) over (order by size_of_colony) as colony_ntile
+    from ecoli_data
+) as a
+order by id;
