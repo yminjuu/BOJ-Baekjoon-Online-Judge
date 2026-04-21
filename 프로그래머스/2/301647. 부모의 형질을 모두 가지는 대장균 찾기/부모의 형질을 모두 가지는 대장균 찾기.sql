@@ -1,6 +1,4 @@
--- 코드를 작성해주세요
-SELECT A.ID, A.GENOTYPE, B.GENOTYPE AS PARENT_GENOTYPE
-FROM ECOLI_DATA A JOIN ECOLI_DATA B ON A.PARENT_ID = B.ID
-WHERE A.GENOTYPE & B.GENOTYPE = B.GENOTYPE
-# 비트 연산
-ORDER BY A.ID;
+select a.id, a.genotype, b.genotype as parent_genotype
+from ecoli_data a join ecoli_data b on (a.parent_id = b.id)
+where a.genotype & b.genotype = b.genotype # 부모가 가진 형질 다 가짐 => 비트연산
+order by a.id;
