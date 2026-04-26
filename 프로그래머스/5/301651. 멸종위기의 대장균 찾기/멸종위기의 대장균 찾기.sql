@@ -1,23 +1,21 @@
-with recursive generation_table as (
-    # anchor
-    select ID, PARENT_ID, 1 as generation
-    from ECOLI_DATA
-    where PARENT_ID is null
+with recursive g as (
+    select id, parent_id, 1 as generation
+    from ecoli_data
+    where parent_id is null
     
     union all
     
-    # recursive
-    select e.ID, e.PARENT_ID, g.generation+1 as generation
-    from ECOLI_DATA e 
-    join generation_table g 
-    where g.ID=e.PARENT_ID
+    select a.id, a.parent_id, generation+1 as generation
+    from ecoli_data a join g
+    where a.parent_id = g.id
 )
-select COUNT(a.ID) as COUNT, a.generation as GENERATION
-FROM generation_table a
-where a.ID not in (
-    select b.PARENT_ID
-    from generation_table b
-    where b.generation = a.generation+1
+
+select count(id) as count, generation
+from g
+where id not in (
+    select parent_id
+    from g
+    where parent_id is not null
 )
-group by a.generation
-order by a.generation;
+group by generation
+order by generation;
