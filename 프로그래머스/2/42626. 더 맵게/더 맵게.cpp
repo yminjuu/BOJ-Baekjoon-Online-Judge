@@ -8,18 +8,18 @@ using namespace std;
 int solution(vector<int> scoville, int K) {
     int answer = 0;
     
-//     최소 힙에 넣는다
-    priority_queue<int, vector<int>, greater<int>> pq (scoville.begin(), scoville.end());
+    priority_queue<int, vector<int>, greater<int>> pq(scoville.begin(), scoville.end());
     
-    // 최종 목표는 top이 K 이상인 것
-    while (pq.top()<K){
-        //     개별 음식의 스코빌 지수가 7 이상 (성공) or pq size가 2 미만 (실패) => 종료
-        if (pq.size()<2) { return -1;}
+    while (pq.top() < K){
+        if (pq.size()<2) {
+            answer = -1;
+            break;
+        }
+        int first = pq.top(); pq.pop();
+        int second = pq.top(); pq.pop();
         
-         //     음식을 섞고
-        int tmp= pq.top(); pq.pop();
-        pq.push(tmp + 2*pq.top());
-        pq.pop();
+        int newScoville = first + second * 2;
+        pq.push(newScoville);
         answer++;
     }
     
