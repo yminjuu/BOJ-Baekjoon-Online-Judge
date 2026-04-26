@@ -2,44 +2,54 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <iostream>
+#include <cmath>
 
 using namespace std;
 
-struct cmp {
-    bool operator()(vector<int> &a, vector<int> &b) {
-        if (a.back()==b.back()) return a.front() > b.front(); // 소요시간이 같으면
-        else return a.back() > b.back(); // 소요시간이 짧은 것이 우선
+struct Disk {
+    int timeCost, requestTime, num;
+};
+
+struct cmp{
+    bool operator() (Disk &a, Disk &b) {
+    if (a.timeCost!= b.timeCost) return a.timeCost > b.timeCost; // false 여야 앞으로
+    else if (a.requestTime != b.requestTime) return a.requestTime > b.requestTime;
+    else return a.num > b.num;
+    }
+};
+
+struct compare {
+    bool operator() (vector<int> a, vector<int> b){
+        if (a[0]!=b[0]) return a[0] < b[0]; // 요청 시점 
+        else a[1] < b[1]; // 소요 시간
     }
 };
 
 int solution(vector<vector<int>> jobs) {
     int answer = 0;
-    int tmp, time=0;
-    int cntJob= jobs.size();
-    priority_queue<vector<int>, vector<vector<int>>, cmp> pq;
-    // 우선순위대로 작업을 출력해주는
     
     sort(jobs.begin(), jobs.end());
-    reverse(jobs.begin(), jobs.end()); // 뒤에 있는 원소를 빼내기 위해 뒤집음
-    // 미리 넣지 않고 시간 순서대로 넣는 것을 반복한다.
-    while (!jobs.empty() || !pq.empty()){
-        while ( !jobs.empty() && jobs.back().front()<=time) {
-            // 넣을 수 있는 job가 있다면 계속 넣는다.
-            pq.push(jobs.back());
-            jobs.pop_back();
-        } 
+    priority_queue<Disk, vector<Disk>, cmp> pq;
+    
+    int idx = 0; int time=0;
+    while (!pq.empty() || idx < jobs.size()){
+        // 1. 대기 큐에 하나도 없다면 대기 큐에 넣기
+        if (pq.empty() && idx < jobs.size()) {
+            time = jobs[idx][0];
+            pq.push({jobs[idx][1], jobs[idx][0], idx++});
+        }
         
-        if (pq.empty() && !jobs.empty()){
-            // 넣을 job가 있는데 time이 흘러야 한다면
-            time= jobs.back().front();
-            continue;
-        } else if (pq.empty()) break; // 진짜 없음
+        // 2. 실행하고 시간 흐름
+        auto [timeCost, requestTime, num] = pq.top(); pq.pop();
+        time += timeCost;
+        answer += (time - requestTime);
         
-        tmp= pq.top().back();
-        answer += (time+tmp) - pq.top().front(); // 평균 시간을 더해준다.
-        pq.pop();
-        time+=tmp;
+        // 3. 시간 흐름에 따라 대기 큐에 들어갔어야 하는 거 다 넣음
+        while (idx < jobs.size() && jobs[idx][0] <= time){
+            pq.push({jobs[idx][1], jobs[idx][0], idx++});
+        }
     }
     
-    return answer/cntJob;
+    return floor((float)answer / jobs.size());
 }
